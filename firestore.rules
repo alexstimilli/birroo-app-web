@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- REUSABLE HELPERS ---
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- VALIDATION BLUEPRINTS ---
+
+    function isValidUserProfile(data) {
+      return data.get('userId', '') == request.auth.uid
+        && data.get('email', '') is string && data.get('email', '').size() <= 256
+        && (!('vehicleName' in data) || data.vehicleName == null || (data.vehicleName is string && data.vehicleName.size() <= 100))
+        && (!('tankCapacity' in data) || data.tankCapacity == null || (data.tankCapacity is number && data.tankCapacity >= 0 && data.tankCapacity <= 500))
+        && (!('consumptionPer100Km' in data) || data.consumptionPer100Km == null || (data.consumptionPer100Km is number && data.consumptionPer100Km >= 0 && data.consumptionPer100Km <= 100))
+        && (data.get('preferredFuelType', 'Benzina') in ["Benzina", "Gasolio", "GPL", "Metano"])
+        && (!('currentTankPercentage' in data) || data.currentTankPercentage == null || (data.currentTankPercentage is number && data.currentTankPercentage >= 0 && data.currentTankPercentage <= 100))
+        && (!('totalSavings' in data) || data.totalSavings == null || (data.totalSavings is number))
+        && (!('actionRadiusKm' in data) || data.actionRadiusKm == null || (data.actionRadiusKm is number && data.actionRadiusKm >= 0 && data.actionRadiusKm <= 100))
+        && (!('currentTankPrice' in data) || data.currentTankPrice == null || (data.currentTankPrice is number && data.currentTankPrice >= 0 && data.currentTankPrice <= 50))
+        && (data.get('blacklistedStations', []) is list && data.get('blacklistedStations', []).size() <= 100);
+    }
+
+    function isValidRefuel(data) {
+      return data.userId == request.auth.uid
+        && data.stationId is string && isValidId(data.stationId)
+        && data.stationName is string && data.stationName.size() <= 200
+        && data.litersFilled is number && data.litersFilled > 0
+        && data.pricePerLiter is number && data.pricePerLiter > 0
+        && data.totalPaid is number && data.totalPaid >= 0
+        && data.savingsEuro is number
+        && data.timestamp is timestamp;
+    }
+
+    // --- COLLECTION MATCH BLOCKS ---
+
+    match /users/{userId} {
+      // Identity Poisoning Guard on Path
+      allow get: if isOwner(userId) && isValidId(userId);
+      
+      allow create: if isOwner(userId) && isValidId(userId)
+        && incoming().keys().hasAll(['userId', 'email'])
+        && isValidUserProfile(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isOwner(userId) && isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().userId == existing().userId
+        && incoming().get('createdAt', request.time) == existing().get('createdAt', request.time)
+        && incoming().updatedAt == request.time
+        // Action-based protection: Users can't change their own email to avoid identity mismatch
+        && !incoming().diff(existing()).affectedKeys().hasAny(['email', 'userId', 'createdAt']);
+
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // Sub-collection for Refuels
+      match /refuels/{refuelId} {
+        allow list: if isOwner(userId) && isValidId(userId);
+        allow get: if isOwner(userId) && isValidId(userId) && isValidId(refuelId);
+        
+        allow create: if isOwner(userId) && isValidId(userId) && isValidId(refuelId)
+          && isValidRefuel(incoming())
+          && incoming().timestamp == request.time;
+          
+        // Refuels are immutable history
+        allow update, delete: if false;
+      }
+    }
+  }
+}

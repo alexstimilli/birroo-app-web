@@ -1,0 +1,50 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User preferences and vehicle details",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "vehicleName": { "type": "string" },
+        "tankCapacity": { "type": "number" },
+        "consumptionPer100Km": { "type": "number" },
+        "preferredFuelType": { "type": "string", "enum": ["Benzina", "Gasolio", "GPL", "Metano"] },
+        "currentTankPercentage": { "type": "number" },
+        "totalSavings": { "type": "number" },
+        "actionRadiusKm": { "type": "number" },
+        "blacklistedStations": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email"]
+    },
+    "RefuelHistory": {
+      "title": "Refuel History",
+      "description": "History of refueling stops",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "stationId": { "type": "string" },
+        "stationName": { "type": "string" },
+        "litersFilled": { "type": "number" },
+        "pricePerLiter": { "type": "number" },
+        "totalPaid": { "type": "number" },
+        "savingsEuro": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "stationName", "litersFilled", "pricePerLiter", "totalPaid", "savingsEuro", "timestamp"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profiles storing vehicle and total savings"
+    },
+    "users/{userId}/refuels/{refuelId}": {
+      "schema": { "$ref": "#/entities/RefuelHistory" },
+      "description": "User's history of refueling to track savings over time"
+    }
+  }
+}

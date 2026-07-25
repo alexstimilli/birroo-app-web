@@ -1,0 +1,10 @@
+{
+  "name": "Birroo",
+  "description": "L'assistente intelligente per il risparmio carburante che trova il deal perfetto per te.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
