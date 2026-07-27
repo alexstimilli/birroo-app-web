@@ -1,14 +1,22 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics, isSupported } from 'firebase/analytics';
-import firebaseConfig from '../../firebase-applet-config.json';
 import { toast } from 'sonner';
 
+// Configurazione per il progetto Firebase di produzione (birroo-production-283c2)
+const firebaseConfig = {
+  apiKey: "AIzaSyDWTRTFWgp4VheW12U8qrMg8P6VfjGanTQ",
+  authDomain: "birroo-production-283c2.firebaseapp.com",
+  projectId: "birroo-production-283c2",
+  storageBucket: "birroo-production-283c2.firebasestorage.app",
+  messagingSenderId: "284112797222",
+  appId: "1:284112797222:web:357a6c92e594935cc7b0e7",
+  measurementId: "G-B84ML9TZL1"
+};
+
 const app = initializeApp(firebaseConfig);
-export const db = firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== "(default)"
-  ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
-  : getFirestore(app);
+export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
@@ -93,4 +101,16 @@ export const handleFirestoreError = (error: any, operationType: any, path: strin
      throw new Error(JSON.stringify(errorInfo));
   }
   throw error;
+};
+
+export const registerWithEmail = async (email: string, pass: string) => {
+  return await createUserWithEmailAndPassword(auth, email, pass);
+};
+
+export const loginWithEmail = async (email: string, pass: string) => {
+  return await signInWithEmailAndPassword(auth, email, pass);
+};
+
+export const resetPassword = async (email: string) => {
+  return await sendPasswordResetEmail(auth, email);
 };

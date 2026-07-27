@@ -1,10 +1,10 @@
 {
-  "projectId": "birroo-production-283c2",
-  "appId": "1:284112797222:web:357a6c92e594935cc7b0e7",
-  "apiKey": "AIzaSyDWTRTFWgp4VheW12U8qrMg8P6VfjGanTQ",
-  "authDomain": "birroo-production-283c2.firebaseapp.com",
-  "firestoreDatabaseId": "(default)",
-  "storageBucket": "birroo-production-283c2.firebasestorage.app",
-  "messagingSenderId": "284112797222",
-  "measurementId": "G-B84ML9TZL1"
+  "projectId": "gen-lang-client-0496745135",
+  "appId": "1:866047692868:web:d707773fdf76213a3e6c11",
+  "apiKey": "AIzaSyDL5bg3AI111W0b_Jy0EGwV87nfojy_1jA",
+  "authDomain": "gen-lang-client-0496745135.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-9ba4af86-f36d-49d7-845f-387f3896e8cd",
+  "storageBucket": "gen-lang-client-0496745135.firebasestorage.app",
+  "messagingSenderId": "866047692868",
+  "measurementId": "G-TFLZS7PEPQ"
 }

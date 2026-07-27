@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { AuthProvider, useAuth } from "./components/AuthProvider";
-import { loginWithGoogle, logout, analytics, db, initAnalytics } from "./lib/firebase";
+import { logout, analytics, db, initAnalytics } from "./lib/firebase";
 import { logEvent } from "firebase/analytics";
 import {
   MapContainer,
@@ -70,6 +70,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { Onboarding } from "./components/Onboarding";
+import { AuthDialog } from "./components/AuthDialog";
 import { PlaceAutocompleteInput } from "./components/PlaceAutocompleteInput";
 
 const RouteABIcon = ({ className }: { className?: string }) => (
@@ -3405,7 +3406,7 @@ function MainApp() {
                 initial={{ y: -60, opacity: 0 }}
                 animate={{ y: pullDistance - 60, opacity: 1 }}
                 exit={{ y: -60, opacity: 0 }}
-                className="absolute top-0 left-0 right-0 z-[2000] flex justify-center pt-8 pointer-events-none"
+                className="absolute top-10 sm:top-12 left-0 right-0 z-[2000] flex justify-center pt-8 pointer-events-none"
               >
                 <div className="bg-white rounded-full p-3 shadow-xl border border-indigo-100 flex items-center gap-2 px-4">
                   <RefreshCw
@@ -3502,7 +3503,7 @@ function MainApp() {
           </div>
 
           {/* Top Navbar */}
-          <header className="absolute top-0 left-0 w-full z-[2000] p-4 sm:pt-6 sm:px-8 pointer-events-none">
+          <header className="absolute top-10 sm:top-12 left-0 w-full z-[2000] p-4 sm:pt-6 sm:px-8 pointer-events-none">
             <div className="w-full flex flex-col gap-3">
               <div className="flex items-center justify-between gap-4 w-full relative z-[2010]">
                 {/* Logo & Toggle - Top Left */}
@@ -3668,13 +3669,14 @@ function MainApp() {
                       <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400 shrink-0" />
                     </div>
                   ) : (
-                    <Button
-                      className="rounded-2xl shadow-lg h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4 shrink-0 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-2"
-                      onClick={loginWithGoogle}
-                    >
-                      <GoogleLogo className="w-4 h-4 shrink-0" />
-                      <span className="font-semibold">{t("account")}</span>
-                    </Button>
+                    <AuthDialog>
+                      <Button
+                        className="rounded-2xl shadow-lg h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4 shrink-0 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-2"
+                      >
+                        <User className="w-4 h-4 shrink-0" />
+                        <span className="font-semibold">{t("account")}</span>
+                      </Button>
+                    </AuthDialog>
                   )}
                 </div>
               </div>
@@ -3879,7 +3881,7 @@ function MainApp() {
           </header>
 
           {/* Desktop Sidebar */}
-          <div className="hidden sm:flex absolute top-32 left-8 z-[1000] w-80 flex-col gap-4 pointer-events-auto max-h-[calc(100vh-140px)] overflow-y-auto pt-4">
+          <div className="hidden sm:flex absolute top-[10.5rem] sm:top-40 left-8 z-[1000] w-80 flex-col gap-4 pointer-events-auto max-h-[calc(100vh-140px)] overflow-y-auto pt-4">
             <SidebarContent
               user={user}
               profile={profile}
@@ -3992,7 +3994,7 @@ function MainApp() {
 
           {/* Top 3 Stations Intermediate View */}
           {topStations.length > 0 && !activeStation && (
-            <div className="fixed bottom-0 sm:bottom-auto sm:top-32 left-0 right-0 sm:left-auto sm:right-8 z-[2100] sm:z-[1000] w-full sm:w-96 pointer-events-none flex flex-col justify-end">
+            <div className="fixed bottom-0 sm:bottom-auto sm:top-40 left-0 right-0 sm:left-auto sm:right-8 z-[2100] sm:z-[1000] w-full sm:w-96 pointer-events-none flex flex-col justify-end">
               <Card className="pointer-events-auto overflow-hidden rounded-t-[2.5rem] sm:rounded-3xl shadow-[0_-8px_40px_rgba(0,0,0,0.15)] sm:shadow-2xl border-slate-200 bg-white animate-in slide-in-from-bottom-full sm:slide-in-from-right-8 duration-300 flex flex-col max-h-[50vh] sm:max-h-[calc(100vh-140px)]">
                 {/* Swipe Handle Wrapper */}
                 <div
@@ -4742,16 +4744,17 @@ function MainApp() {
                 <p>{t("login_prompt_desc")}</p>
               </div>
               <div className="flex flex-col gap-3 mt-4">
-                <Button
-                  variant="default"
-                  className="w-full h-12 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700"
-                  onClick={() => {
-                    setShowLoginPromptDialog(false);
-                    loginWithGoogle();
-                  }}
-                >
-                  {t("btn_ok_login")}
-                </Button>
+                <AuthDialog>
+                  <Button
+                    variant="default"
+                    className="w-full h-12 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700"
+                    onClick={() => {
+                      setShowLoginPromptDialog(false);
+                    }}
+                  >
+                    {t("btn_ok_login")}
+                  </Button>
+                </AuthDialog>
                 <Button
                   variant="outline"
                   className="w-full h-12 text-sm font-semibold rounded-xl text-slate-600 border-slate-300 bg-transparent hover:bg-slate-50"
