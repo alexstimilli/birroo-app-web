@@ -13,9 +13,9 @@ export default defineConfig(({mode}) => {
       VitePWA({
         registerType: 'autoUpdate',
         manifest: {
-          name: 'Birroo',
+          name: 'Birroo - Veloce. Risparmia.',
           short_name: 'Birroo',
-          description: 'Birroo ti aiuta a calcolare i consumi reali e trovare i distributori più convenienti.',
+          description: 'Traccia, confronta i prezzi del carburante e trova sempre il distributore più conveniente.',
           theme_color: '#ffffff',
           background_color: '#ffffff',
           display: 'standalone',
@@ -48,8 +48,6 @@ export default defineConfig(({mode}) => {
       },
     },
     server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true', allowedHosts: true,
     },
   };

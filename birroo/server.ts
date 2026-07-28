@@ -333,9 +333,20 @@ async function startServer() {
       // Fallback search in local DB if AI fails or key is missing
       const searchLocal = () => {
         const q = query.toLowerCase();
-        return COMMON_VEHICLES_DB.find((v) =>
+        let match = COMMON_VEHICLES_DB.find((v) =>
           v.keywords.some((k: string) => q.includes(k)),
         );
+        if (match) return match;
+
+        // Try tokenized match
+        const qTokens = q.split(/\s+/);
+        match = COMMON_VEHICLES_DB.find((v) =>
+          v.keywords.some((k: string) => {
+            const kTokens = k.toLowerCase().split(/\s+/);
+            return kTokens.every((kt: string) => qTokens.some((qt: string) => qt.includes(kt) || kt.includes(qt)));
+          })
+        );
+        return match;
       };
 
       try {

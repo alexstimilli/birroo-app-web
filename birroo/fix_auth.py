@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+with open("src/components/AuthDialog.tsx", "r") as f:
+    content = f.read()
+
+import re
+
+# We want to replace the whole content with a simpler one that just has Google login
+new_content = """import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { loginWithGoogle } from "../lib/firebase";
@@ -30,7 +36,7 @@ export function AuthDialog({ children }: { children: React.ReactNode }) {
       <DialogContent className="sm:max-w-md rounded-3xl p-6 z-[3000]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center">
-            {t("accedi_con_google", "Accedi con Google")}
+            {t("accedi_registrati", "Accedi o Registrati")}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 mt-4">
@@ -49,3 +55,7 @@ export function AuthDialog({ children }: { children: React.ReactNode }) {
     </Dialog>
   );
 }
+"""
+
+with open("src/components/AuthDialog.tsx", "w") as f:
+    f.write(new_content)

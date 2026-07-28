@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, signInWithRedirect, getRedirectResult, sendEmailVerification } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import { toast } from 'sonner';
@@ -12,7 +12,7 @@ const firebaseConfig = {
   storageBucket: "birroo-production-283c2.firebasestorage.app",
   messagingSenderId: "284112797222",
   appId: "1:284112797222:web:357a6c92e594935cc7b0e7",
-  measurementId: "G-B84ML9TZL1"
+  measurementId: "G-Q0DYDLBKXK"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -104,7 +104,9 @@ export const handleFirestoreError = (error: any, operationType: any, path: strin
 };
 
 export const registerWithEmail = async (email: string, pass: string) => {
-  return await createUserWithEmailAndPassword(auth, email, pass);
+  const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+  await sendEmailVerification(userCredential.user);
+  return userCredential;
 };
 
 export const loginWithEmail = async (email: string, pass: string) => {

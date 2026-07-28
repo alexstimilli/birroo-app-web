@@ -78,6 +78,7 @@ export const COMMON_VEHICLES_DB = [
     // AUDI (Classic & Modern)
     { keywords: ["a1 b", "a1 tfsi", "a1 benzina"], vehicleName: "Audi A1 1.0 TFSI", tankCapacity: 40, consumptionPer100Km: 5.2, fuelType: "Benzina" },
     { keywords: ["a1 d", "a1 tdi", "a1 diesel"], vehicleName: "Audi A1 1.6 TDI", tankCapacity: 45, consumptionPer100Km: 3.8, fuelType: "Gasolio" },
+    { keywords: ["a3 1.6", "a3 1600", "a3 1.6 tdi", "1600 tdi"], vehicleName: "Audi A3 1.6 TDI", tankCapacity: 50, consumptionPer100Km: 4.2, fuelType: "Gasolio" },
     { keywords: ["a3 d", "a3 diesel", "a3 tdi"], vehicleName: "Audi A3 Sportback 30 TDI", tankCapacity: 50, consumptionPer100Km: 4.4, fuelType: "Gasolio" },
     { keywords: ["a3 1.9 tdi", "a3 8l", "a3 8p", "a3 vecchia"], vehicleName: "Audi A3 1.9 TDI", tankCapacity: 55, consumptionPer100Km: 4.5, fuelType: "Gasolio" },
     { keywords: ["a3 b", "a3 benzina", "a3 tfsi"], vehicleName: "Audi A3 35 TFSI", tankCapacity: 50, consumptionPer100Km: 5.6, fuelType: "Benzina" },

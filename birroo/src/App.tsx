@@ -18,6 +18,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { fetchNearbyStations, calculateDistance } from "./lib/mapService";
 import { estimateVehicleData } from "./lib/gemini";
+import { FeedbackDialog } from "./components/FeedbackDialog";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -71,6 +72,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { Onboarding } from "./components/Onboarding";
 import { AuthDialog } from "./components/AuthDialog";
+import { ProfileDialog } from "./components/ProfileDialog";
 import { PlaceAutocompleteInput } from "./components/PlaceAutocompleteInput";
 
 const RouteABIcon = ({ className }: { className?: string }) => (
@@ -1886,7 +1888,8 @@ function SidebarContent({
       </Card>
       
       {/* Footer Links */}
-      <div className="flex flex-col gap-2 px-2 mt-4 text-center pb-4">
+      <div className="flex flex-col gap-2 px-2 mt-4 text-center pb-32 mb-8">
+        <FeedbackDialog />
         <Dialog>
           <DialogTrigger className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
             {t("terms_title", "Termini e Condizioni")}
@@ -1908,7 +1911,6 @@ function SidebarContent({
             </div>
           </DialogContent>
         </Dialog>
-
         <Dialog>
           <DialogTrigger className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
             {t("privacy_policy_title", "Privacy Policy")}
@@ -1930,10 +1932,26 @@ function SidebarContent({
             </div>
           </DialogContent>
         </Dialog>
+        <Dialog>
+          <DialogTrigger className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
+            Dati
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md rounded-3xl p-6 z-[4000] max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold">Dati</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 text-sm text-slate-600 mt-2 leading-relaxed">
+              <p>
+                I dati relativi ai prezzi del carburante e all'anagrafica degli impianti sono elaborati a partire dagli Open Data forniti dal Ministero delle Imprese e del Made in Italy (MIMIT) tramite l'Osservatorio Prezzi Carburanti, che a loro volta sono comunicati dagli esercenti secondo norma di legge. Birroo non può garantirne l'aggiornamento in tempo reale.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
 }
+
 
 function BirrooLogo({ className = "h-6 w-6" }: { className?: string }) {
   return (
@@ -3654,20 +3672,28 @@ function MainApp() {
                   </div>
 
                   {user ? (
-                    <div
-                      className="bg-white/95 backdrop-blur px-2 sm:px-4 py-2 rounded-2xl shadow border border-slate-200 flex items-center gap-2 sm:gap-3 cursor-pointer hover:bg-slate-50 shrink-0"
-                      onClick={() => logout()}
-                    >
-                      <img
-                        src={user.photoURL || ""}
-                        alt="avatar"
-                        className="w-5 h-5 sm:w-6 sm:h-6 rounded-full shrink-0"
-                      />
-                      <span className="text-xs sm:text-sm font-semibold max-w-[60px] sm:max-w-[100px] truncate hidden xxs:inline shrink-0">
-                        {user.displayName?.split(" ")[0]}
-                      </span>
-                      <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400 shrink-0" />
-                    </div>
+                    <ProfileDialog>
+                      <div
+                        className="bg-white/95 backdrop-blur px-2 sm:px-4 py-2 rounded-2xl shadow border border-slate-200 flex items-center gap-2 sm:gap-3 cursor-pointer hover:bg-slate-50 shrink-0"
+                      >
+                        {user.photoURL ? (
+                          <img
+                            src={user.photoURL}
+                            alt="avatar"
+                            className="w-5 h-5 sm:w-6 sm:h-6 rounded-full shrink-0 object-cover"
+                          />
+                        ) : (
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">
+                              {(user.displayName || user.email || "U")[0]}
+                            </span>
+                          </div>
+                        )}
+                        <span className="text-xs sm:text-sm font-semibold max-w-[60px] sm:max-w-[100px] truncate hidden xxs:inline shrink-0">
+                          {user.displayName?.split(" ")[0] || user.email?.split("@")[0]}
+                        </span>
+                      </div>
+                    </ProfileDialog>
                   ) : (
                     <AuthDialog>
                       <Button
